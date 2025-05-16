@@ -1,0 +1,114 @@
+@model IEnumerable<LibraryManagement.Web.Models.BookIssue>
+
+@{
+    ViewData["Title"] = "Issued Books";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="bi bi-emoji-frown" style="font-size:2.5rem;"></i>
+        <h3>No borrowed books</h3>
+        <p>You haven't borrowed any books yet.</p>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Issued Books</h1>
+        <p class="text-gray-600 mb-0">List of all issued books</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus me-2"></i>Issue New Book
+    </a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Date Issued</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var issue in Model)
+                {
+                    var isOverdue = issue.Status == BookIssueStatus.Issued && issue.DateDue < DateTime.UtcNow.Date;
+                    <tr @(isOverdue ? "style='background-color:#ffeaea;'" : "")>
+                        <td>@issue.Book?.Title</td>
+                        <td>@issue.Member?.FullName</td>
+                        <td>@issue.DateIssued.ToString("yyyy-MM-dd")</td>
+                        <td>@issue.DateDue.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (isOverdue)
+                            {
+                                <span class="badge badge-overdue">Overdue</span>
+                            }
+                            else if (issue.Status == BookIssueStatus.Issued)
+                            {
+                                <span class="badge badge-issued">Issued</span>
+                            }
+                            else if (issue.Status == BookIssueStatus.Returned)
+                            {
+                                <span class="badge badge-returned">Returned</span>
+                            }
+                            else
+                            {
+                                @issue.Status
+                            }
+                        </td>
+                        <td>@issue.Note</td>
+                        <td>
+                            @if (issue.Status != BookIssueStatus.Returned)
+                            {
+                                <form asp-action="Return" asp-route-id="@issue.Id" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-success btn-sm">Return</button>
+                                </form>
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+                            {
+                                <a asp-action="Delete" asp-route-id="@issue.Id" class="btn btn-danger btn-sm ms-1" data-bs-toggle="tooltip" title="Delete log">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #b0b0b0;
+    width: 100%;
+}
+.empty-state h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+.empty-state p {
+    margin-bottom: 1.5rem;
+}
+</style> 

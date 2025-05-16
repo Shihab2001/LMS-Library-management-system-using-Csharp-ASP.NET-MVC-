@@ -1,0 +1,235 @@
+@model IEnumerable<LibraryManagement.Web.Models.Book>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Books</h1>
+        <p class="text-gray-600 mb-0">Manage your library's book collection</p>
+    </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add New Book
+        </a>
+    }
+</div>
+
+<div class="card mb-4 p-3 bg-white border-0 shadow-sm">
+    <form method="get" asp-action="Index" class="row g-3 align-items-center">
+        <div class="col-md-4 col-lg-3">
+            <div class="search-box d-flex align-items-center gap-2">
+                <i class="bi bi-search text-gray-400" style="font-size:1.2rem;"></i>
+                <input type="text" name="searchString" value="@ViewData["CurrentSearch"]" class="form-control form-control-lg rounded-pill" placeholder="Search books..." style="background:#f8f8f5;">
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <select name="category" class="form-select form-select-lg rounded-pill" style="background:#f8f8f5;">
+                <option value="">All Categories</option>
+                <option value="Fiction" selected="@(ViewData["CurrentCategory"]?.ToString() == "Fiction")">Fiction</option>
+                <option value="Non-Fiction" selected="@(ViewData["CurrentCategory"]?.ToString() == "Non-Fiction")">Non-Fiction</option>
+                <option value="Science" selected="@(ViewData["CurrentCategory"]?.ToString() == "Science")">Science</option>
+                <option value="History" selected="@(ViewData["CurrentCategory"]?.ToString() == "History")">History</option>
+                <option value="Biography" selected="@(ViewData["CurrentCategory"]?.ToString() == "Biography")">Biography</option>
+            </select>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <select name="availability" class="form-select form-select-lg rounded-pill" style="background:#f8f8f5;">
+                <option value="">All Books</option>
+                <option value="available" selected="@(ViewData["CurrentAvailability"]?.ToString() == "available")">Available</option>
+                <option value="unavailable" selected="@(ViewData["CurrentAvailability"]?.ToString() == "unavailable")">Unavailable</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-lg-3 text-end">
+            <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">
+                <i class="bi bi-search me-2"></i>Search
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2 ms-2">
+                <i class="bi bi-arrow-repeat me-2"></i>Reset
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="row g-4" id="booksGrid" style="padding-bottom: 4rem;">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-emoji-frown" style="font-size:2.5rem;"></i>
+            <h3>No books found</h3>
+            <p>Try adjusting your search or add a new book.</p>
+        </div>
+    }
+    else
+    {
+        @foreach (var book in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="goodreads-book-card-modern d-flex flex-column align-items-center bg-white shadow-sm rounded-4 p-0 h-100 mb-3">
+                    <div class="book-thumb-wrapper w-100 d-flex justify-content-center align-items-center" style="background:#f8f8f5; border-radius: 16px 16px 0 0; min-height: 180px;">
+                        @if (!string.IsNullOrEmpty(book.CoverImage))
+                        {
+                            <img src="@book.CoverImage" alt="@book.Title" class="book-thumb-img" style="width:110px; height:160px; object-fit:cover; border-radius:10px; box-shadow:0 2px 8px rgba(56,33,16,0.10);">
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center bg-light rounded-3 shadow-sm" style="width:110px; height:160px;">
+                                <i class="bi bi-book" style="font-size:2.2rem; color:#b0b0b0;"></i>
+                            </div>
+                        }
+                    </div>
+                    <div class="flex-grow-1 d-flex flex-column justify-content-between w-100 p-3 pt-2">
+                        <div>
+                            <h5 class="mb-1 text-center" style="font-weight:600; color:#382110;">@book.Title</h5>
+                            <div class="mb-1 text-muted text-center" style="font-size:0.98rem;">by @book.Author</div>
+                            <div class="mb-2 text-center" style="font-size:0.93rem;">
+                                <span class="badge rounded-pill @(book.AvailableQuantity > 0 ? "bg-success" : "bg-danger")" style="font-size:0.85rem;">
+                                    @(book.AvailableQuantity > 0 ? "Available" : "Unavailable")
+                                </span>
+                                <span class="ms-2 text-muted">@book.Category</span>
+                            </div>
+                            <div class="mb-2 small text-muted text-center">
+                                <i class="bi bi-hash me-1"></i>@book.ISBN
+                            </div>
+                            <div class="mb-2 small text-muted text-center">
+                                <i class="bi bi-stack me-1"></i>Available @(Math.Min(book.AvailableQuantity, book.Quantity)) of @book.Quantity
+                            </div>
+                        </div>
+                        <div class="mt-2 d-flex gap-2 justify-content-center">
+                            @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+                            {
+                                <a class="btn btn-primary btn-sm px-3" asp-action="Edit" asp-route-id="@book.Id"><i class="bi bi-pencil-square me-1"></i>Edit</a>
+                            }
+                            <a class="btn btn-outline-secondary btn-sm px-3" asp-action="Details" asp-route-id="@book.Id"><i class="bi bi-info-circle me-1"></i>Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<style>
+.goodreads-book-card-modern {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(56,33,16,0.08);
+    border: 1px solid #ede7df;
+    transition: box-shadow 0.18s, transform 0.18s;
+    min-height: 340px;
+    margin-bottom: 1.5rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.goodreads-book-card-modern:hover {
+    box-shadow: 0 8px 24px rgba(56,33,16,0.13);
+    transform: translateY(-2px) scale(1.01);
+}
+.book-thumb-wrapper {
+    width: 100%;
+    min-height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px 16px 0 0;
+    background: #f8f8f5;
+}
+.book-thumb-img {
+    width: 110px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(56,33,16,0.10);
+}
+@@media (max-width: 768px) {
+    .goodreads-book-card-modern {
+        min-height: 320px;
+        padding: 0;
+    }
+    .book-thumb-wrapper {
+        min-height: 140px;
+    }
+}
+.search-box input.form-control {
+    background: #f8f8f5;
+    border: none;
+    box-shadow: none;
+    font-size: 1.08rem;
+}
+.search-box input.form-control:focus {
+    background: #f3f1ea;
+    border: 1px solid #bfae9c;
+    box-shadow: 0 0 0 2px #ede7df;
+}
+.form-select {
+    background: #f8f8f5;
+    border: none;
+    box-shadow: none;
+    font-size: 1.08rem;
+}
+.form-select:focus {
+    background: #f3f1ea;
+    border: 1px solid #bfae9c;
+    box-shadow: 0 0 0 2px #ede7df;
+}
+.btn-primary {
+    background: #382110;
+    border-color: #382110;
+    color: #fff;
+    font-weight: 600;
+}
+.btn-primary:hover {
+    background: #5C4033;
+    border-color: #5C4033;
+}
+.btn-outline-secondary {
+    border-color: #bfae9c;
+    color: #382110;
+    font-weight: 500;
+    background: #f8f8f5;
+}
+.btn-outline-secondary:hover {
+    background: #ede7df;
+    color: #382110;
+    border-color: #bfae9c;
+}
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            function filterBooks() {
+                const searchTerm = $('#searchInput').val().toLowerCase();
+                const category = $('#categoryFilter').val().toLowerCase();
+                const availability = $('#availabilityFilter').val().toLowerCase();
+
+                $('.book-card').each(function() {
+                    const $card = $(this);
+                    const title = $card.data('title');
+                    const bookCategory = $card.data('category').toLowerCase();
+                    const isAvailable = $card.data('available');
+
+                    const matchesSearch = title.includes(searchTerm);
+                    const matchesCategory = !category || bookCategory === category;
+                    const matchesAvailability = !availability || isAvailable === availability;
+
+                    $card.toggle(matchesSearch && matchesCategory && matchesAvailability);
+                });
+            }
+
+            $('#searchInput').on('input', filterBooks);
+            $('#categoryFilter, #availabilityFilter').on('change', filterBooks);
+
+            $('#resetFilters').on('click', function() {
+                $('#searchInput').val('');
+                $('#categoryFilter').val('');
+                $('#availabilityFilter').val('');
+                filterBooks();
+            });
+        });
+    </script>
+} 

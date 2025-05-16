@@ -1,0 +1,105 @@
+@model IEnumerable<LibraryManagement.Web.Models.Member>
+
+@{
+    ViewData["Title"] = "Members";
+}
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="bi bi-emoji-frown" style="font-size:2.5rem;"></i>
+        <h3>No members found</h3>
+        <p>There are no members in the system yet.</p>
+    </div>
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Members</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item active">Members</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Members List
+            <a asp-action="Create" class="btn btn-primary float-end">Add New Member</a>
+        </div>
+        <div class="card-body">
+            <div class="card-body table-responsive">
+                <table id="membersTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>@Html.DisplayNameFor(model => model.FullName)</th>
+                            <th>@Html.DisplayNameFor(model => model.Email)</th>
+                            <th>@Html.DisplayNameFor(model => model.Phone)</th>
+                            <th>@Html.DisplayNameFor(model => model.Type)</th>
+                            <th>@Html.DisplayNameFor(model => model.Department)</th>
+                            <th>ID</th>
+                            <th>Borrowed Books</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? $"https://ui-avatars.com/api/?name={item.FullName}&background=6ec6ff&color=fff&size=48" : item.ImageUrl)" class="rounded-circle" alt="Avatar" width="36" height="36">
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Type)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Department)</td>
+                                <td>@Html.DisplayFor(modelItem => item.StudentId)</td>
+                                <td class="text-center">
+                                    <span style="color: #000; font-weight: bold;">@item.BorrowedBooksCount</span>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="dropdownMenuButton-@item.Id" data-bs-toggle="dropdown" aria-expanded="false" style="border: none;">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-@item.Id">
+                                            <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil"></i> Edit</a></li>
+                                            <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-info-circle"></i> Details</a></li>
+                                            <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash"></i> Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#membersTable').DataTable();
+        });
+    </script>
+}
+
+<style>
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #b0b0b0;
+    width: 100%;
+}
+.empty-state h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+.empty-state p {
+    margin-bottom: 1.5rem;
+}
+</style> 

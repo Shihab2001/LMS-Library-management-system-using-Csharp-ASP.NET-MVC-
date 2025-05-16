@@ -1,0 +1,43 @@
+﻿<Properties StartupConfiguration="{1A2B3C4D-5E6F-7A8B-9C0D-1E2F3A4B5C6D}|Default">
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="LibraryManagement.Web/Controllers/IssuedBooksController.cs">
+    <Files>
+      <File FileName="LibraryManagement.Web/Views/Shared/_Layout.cshtml" />
+      <File FileName="LibraryManagement.Web/Controllers/TestController.cs" />
+      <File FileName="LibraryManagement.Web/Controllers/ReportsController.cs" />
+      <File FileName="LibraryManagement.Web/Data/DbInitializer.cs" />
+      <File FileName="LibraryManagement.Web/Program.cs" Line="17" Column="16" />
+      <File FileName="LibraryManagement.Web/Views/Account/Login.cshtml" />
+      <File FileName="LibraryManagement.Web/Views/Account/Register.cshtml" />
+      <File FileName="LibraryManagement.Web/Controllers/IssuedBooksController.cs" Line="72" Column="99" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="LibraryManagement" expanded="True">
+            <Node name="LibraryManagement.Web" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Data" expanded="True" />
+              <Node name="Migrations" expanded="True">
+                <Node name="20250505200440_InitialCreate.cs" expanded="True" />
+              </Node>
+              <Node name="Models" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="Services" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="IssuedBooks" expanded="True" />
+                <Node name="Shared" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.LibraryManagement.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

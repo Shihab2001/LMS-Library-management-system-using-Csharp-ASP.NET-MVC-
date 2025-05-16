@@ -1,0 +1,219 @@
+@model LibraryManagement.Web.Models.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid" style="padding-bottom: 4rem;">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-card bg-gradient-primary text-white">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h2 class="mb-3">Welcome to Library Management System</h2>
+                            <p class="lead mb-4">Your gateway to knowledge and learning. Manage your library resources efficiently with our comprehensive dashboard.</p>
+                            <div class="d-flex gap-3">
+                                <a href="@Url.Action("Index", "Books")" class="btn btn-light">
+                                    <i class="bi bi-book me-2"></i>Browse Books
+                                </a>
+                                <a href="@Url.Action("Index", "BookIssues")" class="btn btn-outline-light">
+                                    <i class="bi bi-journal-arrow-up me-2"></i>View Issued Books
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                                 alt="Library Welcome" 
+                                 class="img-fluid rounded shadow-lg" 
+                                 style="max-height: 300px; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recently Borrowed Books Carousel -->
+    @* Carousel removed as per user request *@
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4 g-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <i class="bi bi-book stat-icon"></i>
+                        </div>
+                        <div class="col-9 text-end">
+                            <div class="stat-value">@Model.TotalBooks</div>
+                            <div class="stat-label">Total Books</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <i class="bi bi-people stat-icon"></i>
+                        </div>
+                        <div class="col-9 text-end">
+                            <div class="stat-value">@Model.TotalMembers</div>
+                            <div class="stat-label">Total Members</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <i class="bi bi-exclamation-circle stat-icon"></i>
+                        </div>
+                        <div class="col-9 text-end">
+                            <div class="stat-value">@Model.OverdueBooks</div>
+                            <div class="stat-label">Overdue Books</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <i class="bi bi-journal-arrow-up stat-icon"></i>
+                        </div>
+                        <div class="col-9 text-end">
+                            <div class="stat-value">@Model.IssuedBooks</div>
+                            <div class="stat-label">Issued Books</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Reports -->
+    <div class="row">
+        <div class="col-xl-8 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Book Categories Distribution</h5>
+                    <div class="chart-container">
+                        <canvas id="bookCategoriesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Member Types</h5>
+                    <div class="chart-container">
+                        <canvas id="memberTypesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Recent Activity</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Activity</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var activity in Model.RecentActivity)
+                                {
+                                    <tr>
+                                        <td>@activity.Date.ToString("MMM dd, yyyy")</td>
+                                        <td>@activity.Description</td>
+                                        <td>@activity.User</td>
+                                        <td>
+                                            <span class="badge bg-@activity.StatusColor">@activity.Status</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @* Swiper styles removed *@
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Book Categories Chart
+        const bookCategoriesCtx = document.getElementById('bookCategoriesChart').getContext('2d');
+        new Chart(bookCategoriesCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.BookCategories.Keys)),
+                datasets: [{
+                    label: 'Number of Books',
+                    data: @Html.Raw(Json.Serialize(Model.BookCategories.Values)),
+                    backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Member Types Chart
+        const memberTypesCtx = document.getElementById('memberTypesChart').getContext('2d');
+        new Chart(memberTypesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.MemberTypes.Keys)),
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(Model.MemberTypes.Values)),
+                    backgroundColor: [
+                        'rgba(78, 115, 223, 0.8)',
+                        'rgba(28, 200, 138, 0.8)',
+                        'rgba(246, 194, 62, 0.8)',
+                        'rgba(231, 74, 59, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+}

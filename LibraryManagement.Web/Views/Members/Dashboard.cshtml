@@ -1,0 +1,58 @@
+@model LibraryManagement.Web.Models.Member
+@{
+    ViewData["Title"] = "My Library Dashboard";
+    var issues = ViewBag.Issues as List<LibraryManagement.Web.Models.BookIssue>;
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">My Library Dashboard</h1>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">My Profile</div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> @Model.FullName</p>
+                    <p><strong>Email:</strong> @Model.Email</p>
+                    <p><strong>Department:</strong> @Model.Department</p>
+                    <p><strong>Status:</strong> @Model.Status</p>
+                    <p><strong>Borrowed Books:</strong> @Model.BorrowedBooksCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Current Loans</div>
+                <div class="card-body">
+                    @if (issues != null && issues.Any())
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Book</th>
+                                    <th>Issued</th>
+                                    <th>Due</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var issue in issues)
+                                {
+                                    <tr>
+                                        <td>@issue.Book?.Title</td>
+                                        <td>@issue.DateIssued.ToString("yyyy-MM-dd")</td>
+                                        <td>@issue.DateDue.ToString("yyyy-MM-dd")</td>
+                                        <td>@issue.Status</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No current or previous loans.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,139 @@
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Library Management System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div class="d-flex">
+            <!-- Sidebar -->
+            <div class="sidebar text-white" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="d-flex align-items-center gap-2 justify-content-between w-100">
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- Minimal Goodreads-style book icon -->
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="5" width="26" height="22" rx="5" fill="#F4F1EA" stroke="#382110" stroke-width="2"/>
+                                <rect x="7" y="9" width="18" height="14" rx="3" fill="#fff" stroke="#5C4033" stroke-width="1.5"/>
+                                <rect x="11" y="13" width="10" height="6" rx="1.5" fill="#E8E0D0" stroke="#382110" stroke-width="1"/>
+                            </svg>
+                            <span class="sidebar-title">Lib MS</span>
+                        </div>
+                        <button class="sidebar-toggle" id="sidebarToggle" type="button" title="Collapse sidebar">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="sidebar-content">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" title="Dashboard">
+                                <i class="bi bi-house-door-fill"></i> <span class="sidebar-link-text">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Books" asp-action="Index" data-bs-toggle="tooltip" title="Books">
+                                <i class="bi bi-book-half"></i> <span class="sidebar-link-text">Books</span>
+                            </a>
+                        </li>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Members" asp-action="Index" data-bs-toggle="tooltip" title="Members">
+                                    <i class="bi bi-people-fill"></i> <span class="sidebar-link-text">Members</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="BookIssues" asp-action="Index" data-bs-toggle="tooltip" title="Issued Books">
+                                    <i class="bi bi-journal-bookmark-fill"></i> <span class="sidebar-link-text">Issued Books</span>
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("User"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="BookIssues" asp-action="Index" data-bs-toggle="tooltip" title="Borrowed Books">
+                                    <i class="bi bi-journal-bookmark-fill"></i> <span class="sidebar-link-text">Borrowed Books</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="sidebar-footer">
+                    <p class="mb-1">Library Management System</p>
+                    <p class="mb-1">Version 1.0.0</p>
+                    <p class="mb-0">Developed by Summa</p>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content flex-grow-1">
+                <!-- Top Navigation -->
+                <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-auto align-items-center">
+                                <partial name="_LoginPartial" />
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Account" asp-action="Profile" data-bs-toggle="tooltip" title="Profile">
+                                        <i class="bi bi-person-circle"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Page Content -->
+                <div class="container-fluid p-4">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+            <div id="toastContainer"></div>
+        </div>
+    }
+    else
+    {
+        @RenderBody()
+    }
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Sidebar collapse/expand logic
+        $(function () {
+            $('#sidebarToggle').on('click', function () {
+                $('#sidebar').toggleClass('collapsed');
+                if ($('#sidebar').hasClass('collapsed')) {
+                    $(this).find('i').removeClass('bi-chevron-left').addClass('bi-chevron-right');
+                    $('.main-content').css('margin-left', '64px');
+                } else {
+                    $(this).find('i').removeClass('bi-chevron-right').addClass('bi-chevron-left');
+                    $('.main-content').css('margin-left', '250px');
+                }
+            });
+            // Enable tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

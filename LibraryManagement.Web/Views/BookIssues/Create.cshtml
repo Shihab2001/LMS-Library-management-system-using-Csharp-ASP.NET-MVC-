@@ -1,0 +1,67 @@
+@model LibraryManagement.Web.Models.BookIssue
+
+@{
+    ViewData["Title"] = "Issue Book";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">Issue Book</h1>
+            <p class="text-gray-600 mb-0">Lend a book to a member</p>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Issue Details</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="BookRefId" class="control-label">Book</label>
+                    <select asp-for="BookRefId" class="form-control" asp-items="ViewBag.Books">
+                        <option value="">-- Select Book --</option>
+                    </select>
+                    <span asp-validation-for="BookRefId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MemberRefId" class="control-label">Member</label>
+                    <select asp-for="MemberRefId" class="form-control" asp-items="ViewBag.Members">
+                        <option value="">-- Select Member --</option>
+                    </select>
+                    <span asp-validation-for="MemberRefId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DateDue" class="control-label">Due Date</label>
+                    <input asp-for="DateDue" class="form-control" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.AddDays(14).ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DateDue" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Note" class="control-label">Notes</label>
+                    <textarea asp-for="Note" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Note" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>Issue Book
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
